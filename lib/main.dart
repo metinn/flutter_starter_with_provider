@@ -25,42 +25,50 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-        builder: (context) => MyHomePageBloc(),
+        builder: (context) => CounterState(),
         child: Scaffold(
-            appBar: AppBar(
-              title: Text(title),
-            ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('You have pushed the button this many times:'),
-                  Consumer<MyHomePageBloc>(
-                      builder: (context, value, child) {
-                        return Text(value.counter.toString(),
-                            style: Theme.of(context).textTheme.display1);
-                      }
-                  ),
-                ],
-              ),
-            ),
-            floatingActionButton: Consumer<MyHomePageBloc>(
-              builder: (context, value, child) {
-                return FloatingActionButton(
-                  onPressed: () {
-                    value.counter++;
-                  },
-                  tooltip: 'Increment',
-                  child: Icon(Icons.add),
-                );
-              },
-            )
-        )
+          appBar: AppBar(
+            title: Text(title),
+          ),
+          body: Center(
+            child: CounterInformation(),
+          ),
+          floatingActionButton: IncrementButton(),
+        ));
+  }
+}
+
+class CounterInformation extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text('You have pushed the button this many times:'),
+        Consumer<CounterState>(builder: (context, value, child) {
+          return Text(value.counter.toString(),
+              style: Theme.of(context).textTheme.display1);
+        }),
+      ],
     );
   }
 }
 
-class MyHomePageBloc with ChangeNotifier {
+class IncrementButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () {
+        var bloc = Provider.of<CounterState>(context);
+        bloc.counter++;
+      },
+      tooltip: 'Increment',
+      child: Icon(Icons.add),
+    );
+  }
+}
+
+class CounterState with ChangeNotifier {
   int _counter = 0;
   int get counter => _counter;
   set counter(int newValue) {
